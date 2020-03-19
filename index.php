@@ -12,43 +12,39 @@ try{
     $table=$bdd->query("SELECT * FROM todo");
     $architab=$bdd->query("SELECT * FROM done");
     // ajout dans la liste a faire : 
-        if(isset($_POST['addtodo'])){
+    if(isset($_POST['addtodo'])){
            
-            $added=$_POST['addTache'];
+        $added=$_POST['addTache'];
         
-            $tableAj = $bdd->prepare("INSERT INTO todo (todoName) VALUES (?)");
-            $tableAj->bindParam(1, $added);
-            $tableAj->execute();
-            echo "<script>alert('tache bien envoyé !');</script>";
-        }
+        $tableAj = $bdd->prepare("INSERT INTO todo (todoName) VALUES (?)");
+        $tableAj->bindParam(1, $added);
+        $tableAj->execute(); 
+        header('Location:index.php'); 
+    }
     // ajout dans la liste deja faite : 
-        if(isset($_POST['addDone'])){
-            // verifie l'id de la checkbox et va chercher les donnée dans la table correspondante
-            $idCheck=$_POST["checkDo"];
-
-             $checkedVal=$bdd->query("SELECT * FROM todo WHERE idTodo=$idCheck");
-                foreach ($checkedVal as $row){
-                    $toAdd=$row["todoName"];
-                }
-        
-            // insert la valeur dans la table des archive
-             $tableAr = $bdd->prepare("INSERT INTO done (doneName) VALUES (?)");
-             $tableAr->bindParam(1, $toAdd);
-             $tableAr->execute();
-           
-             // supprime de la bdd todo une fois l'info ajouter aux archiver
-             $sql="DELETE FROM todo WHERE idTodo=$idCheck";
-             $deleteResult=$bdd->prepare($sql);
-             $deleteResult->execute();
+    if(isset($_POST['addDone'])){
+    // verifie l'id de la checkbox et va chercher les donnée dans la table correspondante
+    $idCheck=$_POST["checkDo"];
+    $checkedVal=$bdd->query("SELECT * FROM todo WHERE idTodo=$idCheck");
+        foreach ($checkedVal as $row){
+              $toAdd=$row["todoName"];
         }
-
-
+        // insert la valeur dans la table des archive
+        $tableAr = $bdd->prepare("INSERT INTO done (doneName) VALUES (?)");
+        $tableAr->bindParam(1, $toAdd);
+        $tableAr->execute();
+           
+        // supprime de la bdd todo une fois l'info ajouter aux archiver
+        $sql="DELETE FROM todo WHERE idTodo=$idCheck";
+        $deleteResult=$bdd->prepare($sql);
+        $deleteResult->execute();
+        header('Location:index.php'); 
+    }
+    
 }catch(PDOExeption $e){
-    echo "DB connexion ratey";
+    echo "DB connexion échoué";
 }
-
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>  
@@ -58,19 +54,16 @@ try{
     <title>To do list</title>
 </head>
 <body>
-
 <h3>A faire</h3>
 <form action="" method="post">
 <?php 
     foreach ($table as $row){
-    
         echo"<label for='checkDo'>".$row["todoName"]."</label>
         <input type='checkbox' name='checkDo' id='checkDo' value=".$row["idTodo"]."> </br>";
     }
 ?>
 <input type="submit" name="addDone" value="enregistré">
 </form>
-
 
 <h3>archiver</h3>
 <?php 
@@ -87,6 +80,5 @@ try{
 
     <input type="submit" name="addtodo" value="ajouter">
 </form>
-
 </body>
 </html>
