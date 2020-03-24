@@ -1,9 +1,8 @@
 body{
+color:white;
 background-color: rgb(34, 34, 34);
 }
-#labDone{
-
-    opacity: 75%;
+.labDone{
+    opacity: 45%;
     text-decoration: line-through;
-
 }

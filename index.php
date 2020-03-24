@@ -11,10 +11,12 @@ try{
 
     $table=$bdd->query("SELECT * FROM todo");
     $architab=$bdd->query("SELECT * FROM done");
+
     // ajout dans la liste a faire : 
-    if(isset($_POST['addtodo'])){
+
+    if( isset($_POST['addtodo'])  ){
            
-        $added=$_POST['addTache'];
+        $added=strip_tags($_POST['addTache']);
         
         $tableAj = $bdd->prepare("INSERT INTO todo (todoName) VALUES (?)");
         $tableAj->bindParam(1, $added);
@@ -27,7 +29,7 @@ try{
     $idCheck=$_POST["checkDo"];
     $checkedVal=$bdd->query("SELECT * FROM todo WHERE idTodo=$idCheck");
         foreach ($checkedVal as $row){
-              $toAdd=$row["todoName"];
+            $toAdd=$row["todoName"];
         }
         // insert la valeur dans la table des archive
         $tableAr = $bdd->prepare("INSERT INTO done (doneName) VALUES (?)");
@@ -44,7 +46,10 @@ try{
 }catch(PDOExeption $e){
     echo "DB connexion échoué";
 }
+
+
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>  
@@ -56,20 +61,21 @@ try{
 <body>
 <h3>A faire</h3>
 <form action="" method="post">
+
 <?php 
     foreach ($table as $row){
         echo"<label for='checkDo'>".$row["todoName"]."</label>
-        <input type='checkbox' name='checkDo' id='checkDo' value=".$row["idTodo"]."> </br>";
+        <input type='checkbox' onclick=checkArchi(".$row['idTodo'].") name='checkDo' id=".$row['idTodo']." value=".$row["idTodo"]."> </br>";
     }
 ?>
-<input type="submit" name="addDone" value="enregistré">
+<input type="submit" name="addDone" id="addDone" value="enregistré">
 </form>
 
 <h3>archiver</h3>
 <?php 
     foreach ($architab as $row){
-        echo"<label id='labDone' for='checkdone'>".$row["doneName"]."</label>
-        <input type='checkbox' name='checkdone' id='checkdone' checked> </br>";
+        echo"<label class='labDone' for=".$row['idDone'].">".$row["doneName"]."</label>
+        <input type='checkbox' onclick=checkAfr(".$row['idDone'].") name='checkdone' id=".$row['idDone']." checked> </br>";
     }
 ?>
 
@@ -80,5 +86,8 @@ try{
 
     <input type="submit" name="addtodo" value="ajouter">
 </form>
+   <script src="jquery.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
