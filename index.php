@@ -16,10 +16,12 @@ try{
 
     if( isset($_POST['addtodo'])  ){
            
-        $added=strip_tags($_POST['addTache']);
-        
+        $tache=strip_tags($_POST['addTache']);
+     
+        $tache=trim($tache,"/\\w|\\s+/");
+
         $tableAj = $bdd->prepare("INSERT INTO todo (todoName) VALUES (?)");
-        $tableAj->bindParam(1, $added);
+        $tableAj->bindParam(1, $tache);
         $tableAj->execute(); 
         header('Location:index.php'); 
     }
